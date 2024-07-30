@@ -8,7 +8,7 @@ import (
 )
 
 var databaseIntialQuery = `
-CREATE TABLE IF NOT EXISTS config (
+CREATE TABLE IF NOT EXISTS config_persistant (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   config_key VARCHAR(50) NOT NULL,
   config_value TEXT NOT NULL
@@ -31,14 +31,15 @@ func init() {
 
 	sqliteDir := filepath.Join(rootdir, "db.sqlite")
 	AppPersistant = new(appPersistantManager)
-	err = AppPersistant.databaseConnection(sqliteDir)
+	err = AppPersistant.initConnection(sqliteDir)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (c *appPersistantManager) databaseConnection(database string) (err error) {
+// Init database connection
+func (c *appPersistantManager) initConnection(database string) (err error) {
 	db, err := sql.Open("sqlite3", database)
 
 	if err != nil {
@@ -46,5 +47,9 @@ func (c *appPersistantManager) databaseConnection(database string) (err error) {
 	}
 	defer db.Close()
 
+	_, err = db.Exec(databaseIntialQuery)
+	if err != nil {
+		return err
+	}
 	return nil
 }

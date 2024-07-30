@@ -1,1 +1,8 @@
+# Dotenv
 *.env
+
+# SQLite
+db.sqlite
+
+# Goland IDE
+.idea
